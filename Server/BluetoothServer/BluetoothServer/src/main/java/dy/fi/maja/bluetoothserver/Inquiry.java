@@ -12,7 +12,6 @@ import javax.bluetooth.DiscoveryListener;
 import javax.bluetooth.LocalDevice;
 import javax.bluetooth.RemoteDevice;
 import javax.bluetooth.ServiceRecord;
-import sun.util.resources.cldr.zh.LocaleNames_zh_Hant_HK;
 
 /**
  *

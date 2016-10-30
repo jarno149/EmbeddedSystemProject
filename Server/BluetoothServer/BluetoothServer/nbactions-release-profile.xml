@@ -30,16 +30,17 @@
             </properties>
         </action>
         <action>
-            <actionName>build</actionName>
-            <preAction>build-with-dependencies</preAction>
+            <actionName>profile</actionName>
             <packagings>
-                <packaging>*</packaging>
+                <packaging>jar</packaging>
             </packagings>
             <goals>
-                <goal>install</goal>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
             </goals>
             <properties>
-                <Env.JAVA_HOME>C:\Program Files\Java\jdk1.8.0_65</Env.JAVA_HOME>
+                <exec.args>-classpath %classpath dy.fi.maja.bluetoothserver.Main</exec.args>
+                <exec.executable>java</exec.executable>
             </properties>
         </action>
     </actions>

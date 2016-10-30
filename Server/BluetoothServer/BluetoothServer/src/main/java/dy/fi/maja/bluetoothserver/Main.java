@@ -7,11 +7,7 @@ package dy.fi.maja.bluetoothserver;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import javax.bluetooth.*;
 
 /**

@@ -8,6 +8,9 @@ package dy.fi.maja.bluetoothserver;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.json.simple.JSONArray;
@@ -32,6 +35,16 @@ public class Settings
         
         try
         {
+            try
+            {
+                Path asd = Paths.get("config.json");
+                System.out.println(asd.toAbsolutePath().toString());
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            
+            
             Object o = parser.parse(new FileReader("config.json"));
             JSONObject jsonObject = (JSONObject)o;
             
