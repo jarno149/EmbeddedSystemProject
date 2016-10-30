@@ -1,0 +1,11 @@
+{
+	"LoggingUrl" : null,
+	"Devices":
+	[
+		{
+			"Name" : "Test",
+			"MAC" : "20:15:12:08:63:35",
+			"PIN" : "1807"
+		}
+	]
+}
