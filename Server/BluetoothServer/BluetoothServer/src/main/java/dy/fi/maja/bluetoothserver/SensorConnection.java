@@ -20,6 +20,7 @@ public class SensorConnection implements Runnable
 {
     private RemoteDevice remoteDevice;
     private String deviceName;
+    private boolean hasbeenConnected = false;
     
     public SensorConnection(RemoteDevice device)
     {
@@ -42,6 +43,7 @@ public class SensorConnection implements Runnable
             {
                 StreamConnection connection = (StreamConnection)Connector.open(String.format("btspp://%s:1;master=true;encrypt=true;", remoteDevice.getBluetoothAddress()));
                 ANSI.printGreen(deviceName + " is connected...");
+                hasbeenConnected = true;
                 DataInputStream input = connection.openDataInputStream();
                 DataOutputStream output = connection.openDataOutputStream();
                 InputStreamReader reader = new InputStreamReader(input);
@@ -74,7 +76,14 @@ public class SensorConnection implements Runnable
             }
             catch (Exception e)
             {
-                ANSI.printRed(this.deviceName + " Connection lost. Reconnecting...");
+                if(hasbeenConnected)
+                {
+                    ANSI.printRed(this.deviceName + " Connection lost. Reconnecting...");
+                    this.hasbeenConnected = false;
+                }  
+                else
+                    ANSI.printRed("Cannot connect to " + this.deviceName);
+                Sleep(1000);
             }
         }
     }
