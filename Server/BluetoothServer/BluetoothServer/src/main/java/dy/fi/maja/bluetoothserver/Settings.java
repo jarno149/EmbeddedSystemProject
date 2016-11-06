@@ -35,16 +35,6 @@ public class Settings
         
         try
         {
-            try
-            {
-                Path asd = Paths.get("config.json");
-                System.out.println(asd.toAbsolutePath().toString());
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            
-            
             Object o = parser.parse(new FileReader("config.json"));
             JSONObject jsonObject = (JSONObject)o;
             
