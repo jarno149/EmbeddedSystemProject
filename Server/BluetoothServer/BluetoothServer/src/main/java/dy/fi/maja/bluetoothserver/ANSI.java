@@ -5,6 +5,8 @@
  */
 package dy.fi.maja.bluetoothserver;
 
+import java.util.Date;
+
 /**
  *
  * @author Jarno
@@ -21,34 +23,60 @@ public class ANSI
     public static final String CYAN = "\u001B[36m";
     public static final String WHITE = "\u001B[37m";
     
+    public static boolean useColors = true;
+    
     public static void printRed(String message)
     {
-        System.out.println(RED + message + RESET);
+        if(useColors)
+            System.out.println(RED + message + RESET);
+        else
+            System.out.println(message);
+        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void printGreen(String message)
     {
-        System.out.println(GREEN + message + RESET);
+        if(useColors)
+            System.out.println(GREEN + message + RESET);
+        else
+            System.out.println(message);
+        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void printYellow(String message)
     {
-        System.out.println(YELLOW + message + RESET);
+        if(useColors)
+            System.out.println(YELLOW + message + RESET);
+        else
+            System.out.println(message);
+        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void printBlue(String message)
     {
-        System.out.println(BLUE + message + RESET);
+        if(useColors)
+            System.out.println(BLUE + message + RESET);
+        else
+            System.out.println(message);
+        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void printPurple(String message)
     {
-        System.out.println(PURPLE + message + RESET);
+        if(useColors)
+            System.out.println(PURPLE + message + RESET);
+        else
+            System.out.println(message);
+        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void printCyan(String message)
     {
-        System.out.println(CYAN + message + RESET);
+        if(useColors)
+            System.out.println(CYAN + message + RESET);
+        else
+            System.out.println(message);
+        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void nextLine()

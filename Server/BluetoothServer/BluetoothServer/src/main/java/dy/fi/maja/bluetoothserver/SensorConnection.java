@@ -56,6 +56,13 @@ public class SensorConnection implements Runnable
             
             client = new MqttClient(brokerAddress, configuration.Name, persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
+            
+            if(Settings.BrokerPassword != null && Settings.BrokerUsername != null)
+            {
+                connOpts.setPassword(Settings.BrokerPassword.toCharArray());
+                connOpts.setUserName(Settings.BrokerUsername);
+            }
+            
             connOpts.setCleanSession(true);
             ANSI.printGreen("Connecting to broker: " + Settings.BrokerUrl);
             client.connect(connOpts);

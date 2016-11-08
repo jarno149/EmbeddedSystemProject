@@ -17,15 +17,22 @@ import javax.bluetooth.*;
 public class Main
 {
     public static Date startTime;
+    public static DateFormat dateFormat;
     
     public static void main(String[] args)
     {
+        if(System.getProperty("os.name").toLowerCase().startsWith("windows"))
+            ANSI.useColors = false;
+        
         startTime = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        System.out.println(ANSI.GREEN + "BluetoothService started\t\t" + dateFormat.format(startTime) + ANSI.RESET);
+        dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        ANSI.printGreen("BluetoothService started\t\t" + dateFormat.format(startTime));
         
         // Read settings first
         Settings.readSettings();
+        
+        if(Settings.LogPath != null)
+            Logger.Init(Settings.LogPath);
         
         LocalDevice device = getLocalDevice();
         
@@ -81,7 +88,7 @@ public class Main
                 return locDev;
             } catch (BluetoothStateException e)
             {
-                System.out.println("Cannot find localdevice...");
+                ANSI.printRed("Cannot find localdevice");
             }
 
             try
@@ -89,7 +96,7 @@ public class Main
                 Thread.sleep(retryTimeOut);
             } catch (InterruptedException e)
             {
-                System.out.println("Something went wrong... " + e.getLocalizedMessage());
+                ANSI.printRed("Something went wrong... " + e.getLocalizedMessage());
             }
         }
     }

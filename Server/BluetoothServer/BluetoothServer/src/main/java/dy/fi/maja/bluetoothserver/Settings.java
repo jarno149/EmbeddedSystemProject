@@ -28,6 +28,8 @@ public class Settings
     public static String LogPath;
     public static String BrokerUrl;
     public static String BrokerPort;
+    public static String BrokerUsername;
+    public static String BrokerPassword;
     public static ArrayList<Device> Devices;
     
     public static void readSettings()
@@ -43,18 +45,23 @@ public class Settings
             LogPath = (String)jsonObject.get("LogPath");
             BrokerUrl = (String)jsonObject.get("BrokerUrl");
             BrokerPort = (String)jsonObject.get("BrokerPort");
+            BrokerUsername = (String)jsonObject.get("BrokerUsername");
+            BrokerPassword = (String)jsonObject.get("BrokerPassword");
+            
             
             JSONArray devs = (JSONArray)jsonObject.get("Devices");
             for (Object dev : devs)
             {
                 JSONObject obj = (JSONObject)dev;
                 String[] topics = JsonArrayToStringArray((JSONArray)obj.get("Topics"));
+                if(topics == null)
+                    topics = new String[0];
                 Devices.add(new Device((String)obj.get("Name"), (String)obj.get("MAC"), (String)obj.get("PIN"), topics));
             }
         }
         catch (FileNotFoundException e)
         {
-            System.err.println("Config file not found");
+            ANSI.printRed("Config file not found");
         }
         catch (IOException e)
         {
@@ -62,7 +69,11 @@ public class Settings
         }
         catch(ParseException e)
         {
-            System.err.println("Invalid JSON in config file");
+            ANSI.printRed("Invalid JSON in config file");
+        }
+        catch (Exception e)
+        {
+            ANSI.printRed(e.getLocalizedMessage());
         }
     }
     
