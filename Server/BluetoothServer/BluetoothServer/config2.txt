@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>KOMMENT</comment>
+<entry key="pin">paskaa</entry>
+<entry key="name">asdasd</entry>
+<entry key="logPath"/>
+<entry key="device">{</entry>
+<entry key="brokerPort"/>
+<entry key="dbpassword">password</entry>
+<entry key="asdasd">JUUJUUUSUDASD</entry>
+<entry key="}"/>
+<entry key="dbuser">mkyong</entry>
+<entry key="brokerUrl">maja.dy.fi</entry>
+<entry key="mac">asdfafwwwwww</entry>
+<entry key="database">localhost</entry>
+</properties>

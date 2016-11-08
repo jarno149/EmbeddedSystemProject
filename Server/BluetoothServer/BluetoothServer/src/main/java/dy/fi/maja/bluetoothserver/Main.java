@@ -59,7 +59,7 @@ public class Main
         {
             if(dev.RemoteDevice != null)
             {
-                Thread t = new Thread(new SensorConnection(dev.RemoteDevice));
+                Thread t = new Thread(new SensorConnection(dev));
                 t.run();
             }
         }

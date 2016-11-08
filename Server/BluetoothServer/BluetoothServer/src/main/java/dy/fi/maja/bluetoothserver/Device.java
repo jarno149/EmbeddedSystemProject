@@ -16,14 +16,16 @@ public class Device
     public String Name;
     public String MAC;
     public String PIN;
+    public String[] Topics;
     
     public RemoteDevice RemoteDevice;
 
-    public Device(String Name, String MAC, String PIN)
+    public Device(String Name, String MAC, String PIN, String[] topics)
     {
         this.Name = Name;
         this.MAC = MAC;
         this.PIN = PIN;
+        this.Topics = topics;
     }
     
     

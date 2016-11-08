@@ -11,6 +11,11 @@ import java.io.InputStreamReader;
 import javax.bluetooth.RemoteDevice;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
  *
@@ -19,18 +24,46 @@ import javax.microedition.io.StreamConnection;
 public class SensorConnection implements Runnable
 {
     private RemoteDevice remoteDevice;
+    private Device configuration;
     private String deviceName;
     private boolean hasbeenConnected = false;
+    MqttClient client;
     
-    public SensorConnection(RemoteDevice device)
+    public SensorConnection(Device dev)
     {
-        this.remoteDevice = device;
+        this.remoteDevice = dev.RemoteDevice;
         try
         {
-            this.deviceName = device.getFriendlyName(true);
+            this.deviceName = this.remoteDevice.getFriendlyName(true);
         } catch (Exception e)
         {
-            this.deviceName = device.getBluetoothAddress();
+            this.deviceName = this.remoteDevice.getBluetoothAddress();
+        }
+        this.configuration = dev;
+        
+        InitializeMqttClient();
+    }
+    
+    private void InitializeMqttClient()
+    {
+        MemoryPersistence persistence = new MemoryPersistence();
+        try
+        {
+            String brokerAddress = Settings.BrokerUrl;
+            brokerAddress += Settings.BrokerPort != null ? ":" + Settings.BrokerPort : "";
+            if(!brokerAddress.startsWith("tcp://"))
+                brokerAddress = "tcp://" + brokerAddress;
+            
+            client = new MqttClient(brokerAddress, configuration.Name, persistence);
+            MqttConnectOptions connOpts = new MqttConnectOptions();
+            connOpts.setCleanSession(true);
+            ANSI.printGreen("Connecting to broker: " + Settings.BrokerUrl);
+            client.connect(connOpts);
+            ANSI.printGreen("Connected to broker: " + Settings.BrokerUrl);
+            
+        } catch (MqttException exception)
+        {
+            ANSI.printRed(exception.getLocalizedMessage());
         }
     }
     
@@ -60,7 +93,9 @@ public class SensorConnection implements Runnable
                         String inString = new String(b);
                         if(inString.contains("#"))
                         {
-                            System.out.println(sb.toString() + inString.split("#", 0)[0]);
+                            String message = sb.toString() + inString.split("#", 0)[0];
+                            System.out.println(message);
+                            ReceivedMessage(message);
                             sb.setLength(0);
                             sb.append(inString.split("#", 0)[1]);
                             output.write(0);
@@ -84,6 +119,27 @@ public class SensorConnection implements Runnable
                 else
                     ANSI.printRed("Cannot connect to " + this.deviceName);
                 Sleep(1000);
+            }
+        }
+    }
+    
+    private void ReceivedMessage(String message)
+    {
+        if(client.isConnected())
+        {
+            for (String Topic : configuration.Topics)
+            {
+                MqttMessage msg = new MqttMessage(message.getBytes());
+                msg.setQos(0);
+                try
+                {
+                    client.publish(Topic, msg);
+                    
+                } catch (MqttException e)
+                {
+                    ANSI.printRed(e.getLocalizedMessage());
+                }
+                
             }
         }
     }

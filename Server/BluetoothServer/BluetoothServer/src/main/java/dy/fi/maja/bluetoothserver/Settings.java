@@ -25,7 +25,9 @@ import org.json.simple.parser.ParseException;
  */
 public class Settings
 {
-    public static String LoggingUrl;
+    public static String LogPath;
+    public static String BrokerUrl;
+    public static String BrokerPort;
     public static ArrayList<Device> Devices;
     
     public static void readSettings()
@@ -38,12 +40,16 @@ public class Settings
             Object o = parser.parse(new FileReader("config.json"));
             JSONObject jsonObject = (JSONObject)o;
             
-            LoggingUrl = (String)jsonObject.get("LoggingUrl");
+            LogPath = (String)jsonObject.get("LogPath");
+            BrokerUrl = (String)jsonObject.get("BrokerUrl");
+            BrokerPort = (String)jsonObject.get("BrokerPort");
+            
             JSONArray devs = (JSONArray)jsonObject.get("Devices");
             for (Object dev : devs)
             {
                 JSONObject obj = (JSONObject)dev;
-                Devices.add(new Device((String)obj.get("Name"), (String)obj.get("MAC"), (String)obj.get("PIN")));
+                String[] topics = JsonArrayToStringArray((JSONArray)obj.get("Topics"));
+                Devices.add(new Device((String)obj.get("Name"), (String)obj.get("MAC"), (String)obj.get("PIN"), topics));
             }
         }
         catch (FileNotFoundException e)
@@ -68,5 +74,15 @@ public class Settings
                 return dev;
         }
         return null;
+    }
+    
+    private static String[] JsonArrayToStringArray(JSONArray array)
+    {
+        ArrayList<String> strings = new ArrayList<String>();
+        for (int i = 0; i < array.size(); i++)
+        {
+            strings.add(array.get(i).toString());
+        }
+        return strings.toArray(new String[0]);
     }
 }
