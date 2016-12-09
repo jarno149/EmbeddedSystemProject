@@ -1,0 +1,32 @@
+//Ensiksi pit‰‰ sanoa mit‰ DB:t‰ k‰ytet‰‰n
+use TemperatureDB
+
+//Show collections
+show collections
+//update tieto (eka osa on hakuvaihtoehto, kaikki jossa tempvalue xx vaihtuvat)
+db.temperatures.update({Tempvalue:"xx"}, {Tempvalue:"yy", Aika"292948298", Paikka:"SEin‰joki");
+//lis‰‰ tieto
+db.temperatures.insert({Tempvalue:"xx", Aika:"151220161231"});
+
+//etsi tieto temperatures on collectionin nimi.
+db.temperatures.find();
+//etsi tieto, hienompi syntaxi temperatures on collectionin nimi.
+db.temperatures.find().pretty();
+//create collection
+
+db.createCollection('Temperatures');
+
+
+
+//createuser
+db.createUser({
+		user:"Axi",
+		pwd:"1234321",
+		roles:[ "readWrite", "dbAdmin" ]
+});
+
+{
+	
+	TempValue:""
+	Aika: ""
+}
