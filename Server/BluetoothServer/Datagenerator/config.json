@@ -1,0 +1,8 @@
+{
+	"BrokerUrl" : "192.168.1.15",
+	"BrokerPort" : "1883",
+	"BrokerUsername" : "sensor",
+	"BrokerPassword" : "sensor",
+	"BrokerTopic" : "Sensors/Temperatures"
+	"Interval" : "100"
+}
