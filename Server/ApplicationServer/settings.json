@@ -1,4 +1,7 @@
 {
+    "serverSettings" :{
+        "port" : 8081
+    },
 	"mqttSettings" : {
 		"url" : "maja.dy.fi",
 		"userName" : "sensor",

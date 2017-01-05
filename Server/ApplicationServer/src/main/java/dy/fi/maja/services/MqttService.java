@@ -19,7 +19,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
  *
  * @author jarno
  */
-public class MqttService
+public class MqttService implements Runnable
 {
     private MqttSettings settings;
     private static TemperatureRepository temperatureRepo;
@@ -31,7 +31,7 @@ public class MqttService
         temperatureRepo = temperatureRepository;
     }
     
-    public void start()
+    private void start()
     {
         Gson gson = new Gson();
         try
@@ -68,5 +68,31 @@ public class MqttService
         {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void run()
+    {
+        start();
+        
+        sleep(10000);
+        
+        while(true)
+        {
+            if(client == null || !client.isConnected())
+            {
+                start();
+            }
+            sleep(5000);
+        }
+    }
+    
+    private void sleep(int ms)
+    {
+        try
+        {
+            Thread.sleep(ms);
+        }
+        catch(InterruptedException e){}
     }
 }

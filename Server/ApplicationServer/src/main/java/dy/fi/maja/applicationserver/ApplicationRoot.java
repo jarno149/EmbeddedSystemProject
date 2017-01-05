@@ -48,11 +48,12 @@ public class ApplicationRoot
         
         TemperatureController.initRepository(temperatureRepository);
         
-        System.getProperties().put("server.port", 8080);
+        System.getProperties().put("server.port", applicationSettings.getServerSettings().getPort());
         SpringApplication.run(ApplicationRoot.class, args);
         
         mqttService = new MqttService(applicationSettings.getMqttSettings(), temperatureRepository);
-        mqttService.start();
+        Thread mqttServiceThread = new Thread(mqttService);
+        mqttServiceThread.start();
     }
     
     private static void initializeDatabaseConnections()

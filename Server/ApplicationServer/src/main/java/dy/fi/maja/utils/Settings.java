@@ -13,12 +13,23 @@ import jdk.nashorn.internal.parser.JSONParser;
  */
 public class Settings
 {
+    private ServerSettings serverSettings;
     private MqttSettings mqttSettings;
     private DatabaseSettings databaseSettings;
 
     public MqttSettings getMqttSettings()
     {
         return mqttSettings;
+    }
+
+    public ServerSettings getServerSettings()
+    {
+        return serverSettings;
+    }
+
+    public void setServerSettings(ServerSettings serverSettings)
+    {
+        this.serverSettings = serverSettings;
     }
 
     public void setMqttSettings(MqttSettings mqttSettings)
@@ -34,6 +45,32 @@ public class Settings
     public void setDatabaseSettings(DatabaseSettings databaseSettings)
     {
         this.databaseSettings = databaseSettings;
+    }
+    
+    public static class ServerSettings
+    {
+        private int port;
+
+        public ServerSettings(int port)
+        {
+            this.port = port;
+        }
+
+        public ServerSettings()
+        {
+        }
+
+        public int getPort()
+        {
+            return port;
+        }
+
+        public void setPort(int port)
+        {
+            this.port = port;
+        }
+        
+        
     }
     
     public static class MqttSettings
