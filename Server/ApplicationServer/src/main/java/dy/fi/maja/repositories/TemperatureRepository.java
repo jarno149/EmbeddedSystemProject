@@ -8,6 +8,7 @@ package dy.fi.maja.repositories;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import dy.fi.maja.applicationmodels.Temperature;
+import java.util.List;
 import org.mongojack.Aggregation;
 import org.mongojack.DBCursor;
 import static org.mongojack.DBQuery.*;
@@ -44,6 +45,33 @@ public class TemperatureRepository
     {
         DBCursor<Temperature> cursor = this.collection.find().is("sensorname", sensorName);
         return cursorToArray(cursor);
+    }
+    
+    public Temperature[] getAll()
+    {
+        DBCursor<Temperature> cursor = this.collection.find();
+        return cursorToArray(cursor);
+    }
+    
+    public List getSensorNames()
+    {
+        return this.collection.distinct("sensorname");
+    }
+    
+    public Temperature[] getAll(int count)
+    {
+        List temspp = this.collection.distinct("sensorname");
+        
+        DBCursor<Temperature> cursor = this.collection.find().sort(DBSort.asc("timestamp"));
+        Temperature[] allItems = cursorToArray(cursor);
+        Temperature[] temps = new Temperature[count];
+        int counter = 0;
+        for(int i = allItems.length-1; i > allItems.length - count-1 && i >= 0; i--)
+        {
+            temps[counter] = allItems[i];
+            counter++;
+        }
+        return temps;
     }
     
     public Temperature[] getBySensorname(String sensorName, int count)
