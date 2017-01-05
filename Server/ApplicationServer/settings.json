@@ -1,0 +1,14 @@
+{
+	"mqttSettings" : {
+		"url" : "maja.dy.fi",
+		"userName" : null,
+		"passWord" : null,
+		"port" : 1883
+	},
+	"databaseSettings" : {
+		"url" : "maja.dy.fi",
+		"userName" : null,
+		"passWord" : null,
+		"port" : 27017
+	}
+}

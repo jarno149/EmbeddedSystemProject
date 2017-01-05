@@ -1,0 +1,74 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package dy.fi.maja.repositories;
+
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
+import dy.fi.maja.applicationmodels.Temperature;
+import org.mongojack.Aggregation;
+import org.mongojack.DBCursor;
+import static org.mongojack.DBQuery.*;
+import org.mongojack.JacksonDBCollection;
+
+/**
+ *
+ * @author Jarno
+ */
+public class TemperatureRepository
+{
+    private JacksonDBCollection<Temperature, String> collection;
+    
+    public TemperatureRepository(MongoClient client)
+    {
+        DBCollection dBCollection = client.getDB("Sensors").getCollection("Temperatures");
+        this.collection = JacksonDBCollection.wrap(dBCollection, Temperature.class, String.class);
+        
+    }
+    
+    private Temperature[] cursorToArray(DBCursor<Temperature> t)
+    {
+        Temperature[] temps = new Temperature[t.count()];
+        int counter = 0;
+        while(t.hasNext())
+        {
+            temps[counter] = t.next();
+            counter++;
+        }
+        return temps;
+    }
+    
+    public Temperature[] getBySensorname(String sensorName)
+    {
+        DBCursor<Temperature> cursor = this.collection.find().is("sensorname", sensorName);
+        return cursorToArray(cursor);
+    }
+    
+    public Temperature[] getBetweenTimestamps(long from, long to)
+    {
+        DBCursor<Temperature> cursor = this.collection.find().lessThan("timestamp", to).and(greaterThan("timestamp", from));
+        return cursorToArray(cursor);
+    }
+    
+    public Temperature getById(String id)
+    {
+        return this.collection.findOneById(id);
+    }
+    
+    public void insert(Temperature t)
+    {
+        this.collection.insert(t);
+    }
+    
+    public void delete(Temperature t)
+    {
+        this.collection.removeById(t.getId());
+    }
+    
+    public void delete(String id)
+    {
+        this.collection.removeById(id);
+    }
+}
