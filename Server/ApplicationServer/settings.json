@@ -1,9 +1,10 @@
 {
 	"mqttSettings" : {
 		"url" : "maja.dy.fi",
-		"userName" : null,
-		"passWord" : null,
-		"port" : 1883
+		"userName" : "sensor",
+		"passWord" : "sensor",
+		"port" : 1883,
+        "topic" : "sensors/temperatures"
 	},
 	"databaseSettings" : {
 		"url" : "maja.dy.fi",

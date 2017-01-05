@@ -11,10 +11,10 @@ import dy.fi.maja.applicationmodels.Temperature;
 import org.mongojack.Aggregation;
 import org.mongojack.DBCursor;
 import static org.mongojack.DBQuery.*;
+import org.mongojack.DBSort;
 import org.mongojack.JacksonDBCollection;
 
 /**
- *
  * @author Jarno
  */
 public class TemperatureRepository
@@ -44,6 +44,20 @@ public class TemperatureRepository
     {
         DBCursor<Temperature> cursor = this.collection.find().is("sensorname", sensorName);
         return cursorToArray(cursor);
+    }
+    
+    public Temperature[] getBySensorname(String sensorName, int count)
+    {
+        DBCursor<Temperature> cursor = this.collection.find().is("sensorname", sensorName).sort(DBSort.asc("timestamp"));
+        Temperature[] allItems = cursorToArray(cursor);
+        Temperature[] temps = new Temperature[count];
+        int counter = 0;
+        for(int i = allItems.length-1; i > allItems.length - count-1 && i >= 0; i--)
+        {
+            temps[counter] = allItems[i];
+            counter++;
+        }
+        return temps;
     }
     
     public Temperature[] getBetweenTimestamps(long from, long to)

@@ -9,30 +9,50 @@ import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import dy.fi.maja.applicationmodels.Temperature;
 import dy.fi.maja.applicationmodels.User;
+import dy.fi.maja.controllers.TemperatureController;
 import dy.fi.maja.repositories.TemperatureRepository;
 import dy.fi.maja.repositories.UserRepository;
+import dy.fi.maja.services.MqttService;
 import dy.fi.maja.utils.Settings;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  *
  * @author Jarno
  */
+
+@SpringBootApplication
+@ComponentScan(basePackages = {"dy.fi.maja.controllers"})
+@EnableAutoConfiguration(exclude={MongoAutoConfiguration.class})
 public class ApplicationRoot
 {
     public static Settings applicationSettings;
     public static TemperatureRepository temperatureRepository;
     public static UserRepository userRepository;
     
+    public static MqttService mqttService;
+    
     public static void main(String[] args)
     {
         // Get settings from file
         applicationSettings = initializeSettings();
-        
         initializeDatabaseConnections();
+        
+        TemperatureController.initRepository(temperatureRepository);
+        
+        System.getProperties().put("server.port", 8080);
+        SpringApplication.run(ApplicationRoot.class, args);
+        
+        mqttService = new MqttService(applicationSettings.getMqttSettings(), temperatureRepository);
+        mqttService.start();
     }
     
     private static void initializeDatabaseConnections()

@@ -42,13 +42,15 @@ public class Settings
         private String userName;
         private String passWord;
         private int port;
+        private String topic;
 
-        public MqttSettings(String url, String userName, String passWord, int port)
+        public MqttSettings(String url, String userName, String passWord, int port, String topic)
         {
             this.url = url;
             this.userName = userName;
             this.passWord = passWord;
             this.port = port;
+            this.topic = topic;
         }
 
         public MqttSettings()
@@ -57,12 +59,24 @@ public class Settings
 
         public String getUrl()
         {
-            return url;
+            if(url.startsWith("tcp://"))
+                return url + ":" + String.valueOf(port);
+            else return "tcp://" + url + ":" + String.valueOf(port);
         }
 
         public void setUrl(String url)
         {
             this.url = url;
+        }
+        
+        public String getTopic()
+        {
+            return topic;
+        }
+        
+        public void setTopic(String topic)
+        {
+            this.topic = topic;
         }
 
         public String getUserName()
