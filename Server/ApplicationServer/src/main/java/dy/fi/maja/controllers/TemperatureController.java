@@ -52,7 +52,7 @@ public class TemperatureController
             return repo.getBySensorname(sensorName, c);
     }
     
-    @RequestMapping(value = "/sensors", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/sensorNames", method = RequestMethod.GET, produces = "application/json")
     public List getSensorNames()
     {
         return repo.getSensorNames();

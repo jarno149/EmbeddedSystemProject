@@ -26,7 +26,6 @@ public class TemperatureRepository
     {
         DBCollection dBCollection = client.getDB("Sensors").getCollection("Temperatures");
         this.collection = JacksonDBCollection.wrap(dBCollection, Temperature.class, String.class);
-        
     }
     
     private Temperature[] cursorToArray(DBCursor<Temperature> t)
@@ -60,8 +59,6 @@ public class TemperatureRepository
     
     public Temperature[] getAll(int count)
     {
-        List temspp = this.collection.distinct("sensorname");
-        
         DBCursor<Temperature> cursor = this.collection.find().sort(DBSort.asc("timestamp"));
         Temperature[] allItems = cursorToArray(cursor);
         Temperature[] temps = new Temperature[count];
