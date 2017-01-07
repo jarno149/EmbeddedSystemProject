@@ -9,26 +9,33 @@ import com.google.gson.Gson;
 import dy.fi.maja.applicationmodels.Temperature;
 import dy.fi.maja.repositories.TemperatureRepository;
 import dy.fi.maja.utils.Settings.MqttSettings;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import sun.util.resources.CalendarData;
 
 /**
  *
  * @author jarno
  */
-public class MqttService implements Runnable
+public class MqttTemperatureService implements Runnable
 {
     private MqttSettings settings;
     private static TemperatureRepository temperatureRepo;
     private MqttClient client;
+    private Map<String, Temperature> storedObjects;
 
-    public MqttService(MqttSettings settings, TemperatureRepository temperatureRepository)
+    public MqttTemperatureService(MqttSettings settings, TemperatureRepository temperatureRepository)
     {
         this.settings = settings;
         temperatureRepo = temperatureRepository;
+        storedObjects = new HashMap<String, Temperature>();
     }
     
     private void start()
@@ -55,6 +62,13 @@ public class MqttService implements Runnable
                     try
                     {
                         Temperature t = gson.fromJson(payload, Temperature.class);
+                        
+                        if(storedObjects.containsKey(t.getSensorname())
+                                && storedObjects.get(t.getSensorname()).getTimestamp()
+                                > System.currentTimeMillis() - (settings.getStorageIntervalSecs() * 1000))
+                            return;
+                        
+                        storedObjects.put(t.getSensorname(), t);
                         temperatureRepo.insert(t);
                     }
                     catch(Exception e)

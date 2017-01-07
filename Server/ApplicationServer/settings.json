@@ -2,12 +2,13 @@
     "serverSettings" :{
         "port" : 8081
     },
-	"mqttSettings" : {
+	"temperatureMqttSettings" : {
 		"url" : "maja.dy.fi",
 		"userName" : "sensor",
 		"passWord" : "sensor",
 		"port" : 1883,
-        "topic" : "sensors/temperatures"
+        "topic" : "sensors/temperatures",
+		"storageIntervalSecs" : 1800
 	},
 	"databaseSettings" : {
 		"url" : "maja.dy.fi",

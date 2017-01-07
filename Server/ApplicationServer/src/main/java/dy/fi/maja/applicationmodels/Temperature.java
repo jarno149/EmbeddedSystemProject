@@ -106,7 +106,7 @@ public class Temperature
         
         public static enum Unit
         {
-            Celsius,
+            Celcius,
             Farenheit
         }
     }

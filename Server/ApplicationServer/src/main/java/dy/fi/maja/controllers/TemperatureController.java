@@ -38,7 +38,7 @@ public class TemperatureController
     {
         long currTimestamp = System.currentTimeMillis();
         long dayTimestamp = 86400000;
-        return repo.getBetweenTimestamps(currTimestamp - dayTimestamp, dayTimestamp);
+        return repo.getBetweenTimestamps(currTimestamp - dayTimestamp, currTimestamp);
     }
     
     @RequestMapping(value = "/byName", method = RequestMethod.GET, produces = "application/json")

@@ -12,7 +12,7 @@ import dy.fi.maja.applicationmodels.User;
 import dy.fi.maja.controllers.TemperatureController;
 import dy.fi.maja.repositories.TemperatureRepository;
 import dy.fi.maja.repositories.UserRepository;
-import dy.fi.maja.services.MqttService;
+import dy.fi.maja.services.MqttTemperatureService;
 import dy.fi.maja.utils.Settings;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -38,7 +38,7 @@ public class ApplicationRoot
     public static TemperatureRepository temperatureRepository;
     public static UserRepository userRepository;
     
-    public static MqttService mqttService;
+    public static MqttTemperatureService mqttService;
     
     public static void main(String[] args)
     {
@@ -51,7 +51,7 @@ public class ApplicationRoot
         System.getProperties().put("server.port", applicationSettings.getServerSettings().getPort());
         SpringApplication.run(ApplicationRoot.class, args);
         
-        mqttService = new MqttService(applicationSettings.getMqttSettings(), temperatureRepository);
+        mqttService = new MqttTemperatureService(applicationSettings.getTemperatureMqttSettings(), temperatureRepository);
         Thread mqttServiceThread = new Thread(mqttService);
         mqttServiceThread.start();
     }

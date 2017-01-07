@@ -14,12 +14,12 @@ import jdk.nashorn.internal.parser.JSONParser;
 public class Settings
 {
     private ServerSettings serverSettings;
-    private MqttSettings mqttSettings;
+    private MqttSettings temperatureMqttSettings;
     private DatabaseSettings databaseSettings;
 
-    public MqttSettings getMqttSettings()
+    public MqttSettings getTemperatureMqttSettings()
     {
-        return mqttSettings;
+        return temperatureMqttSettings;
     }
 
     public ServerSettings getServerSettings()
@@ -32,9 +32,9 @@ public class Settings
         this.serverSettings = serverSettings;
     }
 
-    public void setMqttSettings(MqttSettings mqttSettings)
+    public void setMqttSettings(MqttSettings TemperatureMqttSettings)
     {
-        this.mqttSettings = mqttSettings;
+        this.temperatureMqttSettings = TemperatureMqttSettings;
     }
 
     public DatabaseSettings getDatabaseSettings()
@@ -80,14 +80,16 @@ public class Settings
         private String passWord;
         private int port;
         private String topic;
+        private int storageIntervalSecs;
 
-        public MqttSettings(String url, String userName, String passWord, int port, String topic)
+        public MqttSettings(String url, String userName, String passWord, int port, String topic, int storageIntervalSecs)
         {
             this.url = url;
             this.userName = userName;
             this.passWord = passWord;
             this.port = port;
             this.topic = topic;
+            this.storageIntervalSecs = storageIntervalSecs;
         }
 
         public MqttSettings()
@@ -99,6 +101,16 @@ public class Settings
             if(url.startsWith("tcp://"))
                 return url + ":" + String.valueOf(port);
             else return "tcp://" + url + ":" + String.valueOf(port);
+        }
+
+        public int getStorageIntervalSecs()
+        {
+            return storageIntervalSecs;
+        }
+
+        public void setStorageIntervalSecs(int storageIntervalSecs)
+        {
+            this.storageIntervalSecs = storageIntervalSecs;
         }
 
         public void setUrl(String url)
