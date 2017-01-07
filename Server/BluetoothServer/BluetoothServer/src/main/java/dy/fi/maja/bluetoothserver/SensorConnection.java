@@ -5,9 +5,14 @@
  */
 package dy.fi.maja.bluetoothserver;
 
+import ApplicationModels.Temperature;
+import com.google.gson.Gson;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import javax.bluetooth.RemoteDevice;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
@@ -15,7 +20,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
  *
@@ -23,108 +27,160 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
  */
 public class SensorConnection implements Runnable
 {
-    private RemoteDevice remoteDevice;
-    private Device configuration;
-    private String deviceName;
+    private Device configurationDevice;
     private boolean hasbeenConnected = false;
-    MqttClient client;
-    
-    public SensorConnection(Device dev)
+    private MqttClient client;
+
+    public SensorConnection(Device configurationDevice)
     {
-        this.remoteDevice = dev.RemoteDevice;
-        try
-        {
-            this.deviceName = this.remoteDevice.getFriendlyName(true);
-        } catch (Exception e)
-        {
-            this.deviceName = this.remoteDevice.getBluetoothAddress();
-        }
-        this.configuration = dev;
+        this.configurationDevice = configurationDevice;
         
-        InitializeMqttClient();
+        initializeMqttClient();
     }
     
-    private void InitializeMqttClient()
+    private void initializeMqttClient()
     {
-        MemoryPersistence persistence = new MemoryPersistence();
         try
         {
-            String brokerAddress = Settings.BrokerUrl;
-            brokerAddress += Settings.BrokerPort != null ? ":" + Settings.BrokerPort : "";
+            String brokerAddress = ApplicationRoot.applicationSettings.getBrokerUrl() + ":" + String.valueOf(ApplicationRoot.applicationSettings.getBrokerPort());
             if(!brokerAddress.startsWith("tcp://"))
                 brokerAddress = "tcp://" + brokerAddress;
             
-            client = new MqttClient(brokerAddress, configuration.Name, persistence);
-            MqttConnectOptions connOpts = new MqttConnectOptions();
+            client = new MqttClient(brokerAddress, String.valueOf(Math.random()));
+            MqttConnectOptions connectOptions = new MqttConnectOptions();
             
-            if(Settings.BrokerPassword != null && Settings.BrokerUsername != null)
+            if(ApplicationRoot.applicationSettings.getBrokerPassword() != null && ApplicationRoot.applicationSettings.getBrokerUsername() != null)
             {
-                connOpts.setPassword(Settings.BrokerPassword.toCharArray());
-                connOpts.setUserName(Settings.BrokerUsername);
+                connectOptions.setPassword(ApplicationRoot.applicationSettings.getBrokerPassword().toCharArray());
+                connectOptions.setUserName(ApplicationRoot.applicationSettings.getBrokerUsername());
             }
             
-            connOpts.setCleanSession(true);
-            ANSI.printGreen("Connecting to broker: " + Settings.BrokerUrl);
-            client.connect(connOpts);
-            ANSI.printGreen("Connected to broker: " + Settings.BrokerUrl);
+            connectOptions.setCleanSession(true);
+            ColorPrint.printGreen("Connection to broker: " + ApplicationRoot.applicationSettings.getBrokerUrl());
+            client.connect(connectOptions);
+            ColorPrint.printGreen("Connected to broker!");
             
-        } catch (MqttException exception)
+        } catch (Exception e)
         {
-            ANSI.printRed(exception.getLocalizedMessage());
+            ColorPrint.printRed(e.getLocalizedMessage());
         }
     }
-    
+
     @Override
     public void run()
     {
+        StreamConnection connection;
+        
         while (true)
         {         
             try
             {
-                StreamConnection connection = (StreamConnection)Connector.open(String.format("btspp://%s:1;master=true;encrypt=true;", remoteDevice.getBluetoothAddress()));
-                ANSI.printGreen(deviceName + " is connected...");
+                String btAddress = new String();
+                if(configurationDevice.getRemoteDevice() == null)
+                    btAddress = configurationDevice.getMAC().replace(":", "");
+                else
+                    btAddress = configurationDevice.getRemoteDevice().getBluetoothAddress();
+                connection = (StreamConnection)Connector.open(String.format("btspp://%s:1;master=true;encrypt=true;", btAddress));
+                ColorPrint.printGreen(configurationDevice.getName() + " is connected...");
                 hasbeenConnected = true;
                 DataInputStream input = connection.openDataInputStream();
                 DataOutputStream output = connection.openDataOutputStream();
                 InputStreamReader reader = new InputStreamReader(input);
                 StringBuilder sb = new StringBuilder();
                 
-                int failCounter = 100;
+                Gson gson = new Gson();
+                
                 while(true)
                 {
                     output.write(0);
+                    output.flush();
                     if(reader.ready())
                     {
-                        char[] b = new char[400];
+                        char[] b = new char[500];
+                        reader.read(b);
+                        String inputString = new String(b);
+                        sb.append(inputString);
+                        if(sb.toString().contains("#"))
+                        {
+                            String firstPart = sb.toString().split("#", 2)[0];
+                            String tempString = sb.toString().split("#", 2)[1];
+                            sb.setLength(0);
+                            sb.append(tempString);
+                            
+                                String incomingMessage = String.format(firstPart, configurationDevice.getName()).replace("\u0000", "").trim();
+                                
+                                Temperature t = null;
+                                
+                                int failCounter = 0;
+                                while(t == null && failCounter < 50)
+                                {
+                                    try
+                                    {
+                                        t = gson.fromJson(incomingMessage, Temperature.class);
+                                    } catch (Exception e)
+                                    {
+                                        failCounter++;
+                                    }
+                                }
+                                
+                                if(t != null)
+                                {
+                                    t.setTimestamp(System.currentTimeMillis());
+                                    String jsonString = gson.toJson(t);
+                                    ReceivedMessage(jsonString);
+                                }
+                        }
+                        
+                        /*
+                        char[] b = new char[800];
                         reader.read(b);
                         String inString = new String(b);
                         if(inString.contains("#"))
                         {
                             String message = sb.toString() + inString.split("#", 0)[0];
+                            try
+                            {
+                                message = String.format(message, configurationDevice.getName()).trim();
+                            } catch (Exception e)
+                            {
+                                e.printStackTrace();
+                                continue;
+                            }
                             System.out.println(message);
-                            ReceivedMessage(message);
-                            sb.setLength(0);
-                            sb.append(inString.split("#", 0)[1]);
-                            output.write(0);
-                            output.flush();
+                            try
+                            {
+                                Temperature t = gson.fromJson(message, Temperature.class);
+                                t.setTimestamp(System.currentTimeMillis());
+                                String jsonString = gson.toJson(t);
+                                ReceivedMessage(jsonString);
+                                sb.setLength(0);
+                                sb.append(inString.split("#", 0)[1]);
+                                
+                            } catch (Exception e)
+                            {
+                                e.printStackTrace(); 
+                            }
+                            
                         }
                         else if(!inString.trim().equals(""))
                         {
                             sb.append(inString);
                         }
+*/
                     }
-                    Sleep(100);
+                    Sleep(500);
                 }
             }
             catch (Exception e)
             {
+                connection = null;
                 if(hasbeenConnected)
                 {
-                    ANSI.printRed(this.deviceName + " Connection lost. Reconnecting...");
+                    ColorPrint.printRed(this.configurationDevice.getName() + " Connection lost. Reconnecting...");
                     this.hasbeenConnected = false;
                 }  
                 else
-                    ANSI.printRed("Cannot connect to " + this.deviceName);
+                    ColorPrint.printRed("Cannot connect to " + this.configurationDevice.getName());
                 Sleep(1000);
             }
         }
@@ -134,19 +190,17 @@ public class SensorConnection implements Runnable
     {
         if(client.isConnected())
         {
-            for (String Topic : configuration.Topics)
+            for (String Topic : configurationDevice.getTopics())
             {
                 MqttMessage msg = new MqttMessage(message.getBytes());
                 msg.setQos(0);
                 try
                 {
                     client.publish(Topic, msg);
-                    
                 } catch (MqttException e)
                 {
-                    ANSI.printRed(e.getLocalizedMessage());
+                    ColorPrint.printRed(e.getLocalizedMessage());
                 }
-                
             }
         }
     }
@@ -158,6 +212,7 @@ public class SensorConnection implements Runnable
             Thread.sleep(ms);
         } catch (Exception e)
         {
+            
         }
     }
 }

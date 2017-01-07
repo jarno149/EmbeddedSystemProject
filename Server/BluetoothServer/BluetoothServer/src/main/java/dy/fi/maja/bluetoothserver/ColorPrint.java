@@ -11,19 +11,25 @@ import java.util.Date;
  *
  * @author Jarno
  */
-public class ANSI
+public class ColorPrint
 {
-    public static final String RESET = "\u001B[0m";
-    public static final String BLACK = "\u001B[30m";
-    public static final String RED = "\u001B[31m";
-    public static final String GREEN = "\u001B[32m";
-    public static final String YELLOW = "\u001B[33m";
-    public static final String BLUE = "\u001B[34m";
-    public static final String PURPLE = "\u001B[35m";
-    public static final String CYAN = "\u001B[36m";
-    public static final String WHITE = "\u001B[37m";
+    private static final String RESET = "\u001B[0m";
+    private static final String BLACK = "\u001B[30m";
+    private static final String RED = "\u001B[31m";
+    private static final String GREEN = "\u001B[32m";
+    private static final String YELLOW = "\u001B[33m";
+    private static final String BLUE = "\u001B[34m";
+    private static final String PURPLE = "\u001B[35m";
+    private static final String CYAN = "\u001B[36m";
+    private static final String WHITE = "\u001B[37m";
     
-    public static boolean useColors = true;
+    private static boolean useColors = true;
+    
+    public static void initPrinter()
+    {
+        if(System.getProperty("os.name").toLowerCase().startsWith("windows"))
+            useColors = false;
+    }
     
     public static void printRed(String message)
     {
@@ -31,7 +37,7 @@ public class ANSI
             System.out.println(RED + message + RESET);
         else
             System.out.println(message);
-        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
+        //Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void printGreen(String message)
@@ -40,7 +46,7 @@ public class ANSI
             System.out.println(GREEN + message + RESET);
         else
             System.out.println(message);
-        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
+        //Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void printYellow(String message)
@@ -49,7 +55,7 @@ public class ANSI
             System.out.println(YELLOW + message + RESET);
         else
             System.out.println(message);
-        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
+       // Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void printBlue(String message)
@@ -58,7 +64,7 @@ public class ANSI
             System.out.println(BLUE + message + RESET);
         else
             System.out.println(message);
-        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
+       // Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void printPurple(String message)
@@ -67,7 +73,7 @@ public class ANSI
             System.out.println(PURPLE + message + RESET);
         else
             System.out.println(message);
-        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
+       // Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void printCyan(String message)
@@ -76,7 +82,7 @@ public class ANSI
             System.out.println(CYAN + message + RESET);
         else
             System.out.println(message);
-        Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
+       // Logger.WriteToLog(Main.dateFormat.format(new Date()) + ":\t\t" + message);
     }
     
     public static void nextLine()

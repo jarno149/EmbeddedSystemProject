@@ -10,45 +10,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
-    <build>
-        <plugins>
-            <plugin>
-                <!-- Build executable jar! -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>dy.fi.maja.bluetoothserver.Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputAbsoluteArtifactFilename>true</outputAbsoluteArtifactFilename>
-                            <outputDirectory>
-                                ${project.build.directory}/lib
-                            </outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    
+    <!-- Repositories for dependencies -->
     <repositories>
         <repository>
             <id>pyx4j-web-snapshot</id>
@@ -69,27 +32,67 @@
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
     </repositories>
+    
+    <!-- Build settings for single package -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>dy.fi.maja.bluetoothserver.ApplicationRoot</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
     <dependencies>
+        <!-- Bluecove for windows -->
         <dependency>
             <groupId>net.sf.bluecove</groupId>
             <artifactId>bluecove</artifactId>
             <version>2.1.1-SNAPSHOT</version>
         </dependency>
+        
+        <!-- Bluecove for linux -->
         <dependency>
             <groupId>net.sf.bluecove</groupId>
             <artifactId>bluecove-gpl</artifactId>
             <version>2.1.1-SNAPSHOT</version>
         </dependency>
+        
+        <!-- Bluecove for arm-based linux -->
         <dependency>
             <groupId>br.com.criativasoft.opendevice.ext</groupId>
             <artifactId>bluecove-gpl-arm</artifactId>
             <version>2.1.1-SNAPSHOT</version>
         </dependency>
+        
+        <!-- Gson -->
         <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.0</version>
         </dependency>
+        
+        <!-- MqttClient -->
         <dependency>
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>

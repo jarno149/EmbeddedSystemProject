@@ -5,19 +5,9 @@
  */
 package dy.fi.maja.bluetoothserver;
 
+import com.google.gson.Gson;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 
 /**
  *
@@ -25,75 +15,68 @@ import org.json.simple.parser.ParseException;
  */
 public class Settings
 {
-    public static String LogPath;
-    public static String BrokerUrl;
-    public static String BrokerPort;
-    public static String BrokerUsername;
-    public static String BrokerPassword;
-    public static ArrayList<Device> Devices;
+    private String BrokerUrl;
+    private int BrokerPort;
+    private String BrokerUsername;
+    private String BrokerPassword;
+    private String LogPath;
+    private boolean PairDevices;
+    private Device[] Devices;
     
-    public static void readSettings()
+    public static Settings readSettings(String fileName)
     {
-        Devices = new ArrayList<Device>();
-        JSONParser parser = new JSONParser();
-        
+        Gson gson = new Gson();
         try
         {
-            Object o = parser.parse(new FileReader("config.json"));
-            JSONObject jsonObject = (JSONObject)o;
-            
-            LogPath = (String)jsonObject.get("LogPath");
-            BrokerUrl = (String)jsonObject.get("BrokerUrl");
-            BrokerPort = (String)jsonObject.get("BrokerPort");
-            BrokerUsername = (String)jsonObject.get("BrokerUsername");
-            BrokerPassword = (String)jsonObject.get("BrokerPassword");
-            
-            
-            JSONArray devs = (JSONArray)jsonObject.get("Devices");
-            for (Object dev : devs)
-            {
-                JSONObject obj = (JSONObject)dev;
-                String[] topics = JsonArrayToStringArray((JSONArray)obj.get("Topics"));
-                if(topics == null)
-                    topics = new String[0];
-                Devices.add(new Device((String)obj.get("Name"), (String)obj.get("MAC"), (String)obj.get("PIN"), topics));
-            }
+            Settings settings = gson.fromJson(new FileReader(fileName), Settings.class);
+            return settings;
         }
         catch (FileNotFoundException e)
         {
-            ANSI.printRed("Config file not found");
+            ColorPrint.printRed("Cannot " + fileName + " -file");
+            System.exit(0);
         }
-        catch (IOException e)
+        catch(Exception e)
         {
-            e.printStackTrace();
-        }
-        catch(ParseException e)
-        {
-            ANSI.printRed("Invalid JSON in config file");
-        }
-        catch (Exception e)
-        {
-            ANSI.printRed(e.getLocalizedMessage());
-        }
-    }
-    
-    public static Device getDeviceByAddress(String address)
-    {
-        for (Device dev : Devices)
-        {
-            if(dev.MAC.equals(address) || dev.MAC.replace(":","").equals(address))
-                return dev;
+            ColorPrint.printRed("Cannot read settings.json -file");
+            ColorPrint.printRed(e.getLocalizedMessage());
+            System.exit(0);
         }
         return null;
     }
-    
-    private static String[] JsonArrayToStringArray(JSONArray array)
+
+    public String getBrokerUrl()
     {
-        ArrayList<String> strings = new ArrayList<String>();
-        for (int i = 0; i < array.size(); i++)
-        {
-            strings.add(array.get(i).toString());
-        }
-        return strings.toArray(new String[0]);
+        return BrokerUrl;
+    }
+
+    public int getBrokerPort()
+    {
+        return BrokerPort;
+    }
+
+    public String getBrokerUsername()
+    {
+        return BrokerUsername;
+    }
+
+    public String getBrokerPassword()
+    {
+        return BrokerPassword;
+    }
+
+    public String getLogPath()
+    {
+        return LogPath;
+    }
+    
+    public boolean getPairDevices()
+    {
+        return PairDevices;
+    }
+
+    public Device[] getDevices()
+    {
+        return Devices;
     }
 }

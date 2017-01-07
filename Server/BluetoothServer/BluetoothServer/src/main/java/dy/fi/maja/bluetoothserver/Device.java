@@ -13,20 +13,39 @@ import javax.bluetooth.RemoteDevice;
  */
 public class Device
 {
-    public String Name;
-    public String MAC;
-    public String PIN;
-    public String[] Topics;
+    private String Name;
+    private String MAC;
+    private int PIN;
+    private String[] Topics;
+    private transient RemoteDevice RemoteDevice;
     
-    public RemoteDevice RemoteDevice;
-
-    public Device(String Name, String MAC, String PIN, String[] topics)
+    public String getName()
     {
-        this.Name = Name;
-        this.MAC = MAC;
-        this.PIN = PIN;
-        this.Topics = topics;
+        return Name;
     }
-    
-    
+
+    public String getMAC()
+    {
+        return MAC;
+    }
+
+    public int getPIN()
+    {
+        return PIN;
+    }
+
+    public String[] getTopics()
+    {
+        return Topics;
+    }
+
+    public RemoteDevice getRemoteDevice()
+    {
+        return RemoteDevice;
+    }
+
+    public void setRemoteDevice(RemoteDevice RemoteDevice)
+    {
+        this.RemoteDevice = RemoteDevice;
+    }
 }
