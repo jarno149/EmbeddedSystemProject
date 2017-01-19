@@ -6,12 +6,14 @@
 package dy.fi.maja.applicationmodels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import org.mongojack.*;
 
 /**
  *
  * @author Jarno
  */
+@Data
 public class User
 {
     @Id
@@ -90,6 +92,4 @@ public class User
     {
         this.roles = roles;
     }
-    
-    
 }

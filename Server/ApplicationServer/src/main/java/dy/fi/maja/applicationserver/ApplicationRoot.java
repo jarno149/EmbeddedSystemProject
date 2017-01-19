@@ -10,6 +10,7 @@ import com.mongodb.MongoClient;
 import dy.fi.maja.applicationmodels.Temperature;
 import dy.fi.maja.applicationmodels.User;
 import dy.fi.maja.controllers.TemperatureController;
+import dy.fi.maja.controllers.UserController;
 import dy.fi.maja.repositories.TemperatureRepository;
 import dy.fi.maja.repositories.UserRepository;
 import dy.fi.maja.services.MqttTemperatureService;
@@ -47,6 +48,7 @@ public class ApplicationRoot
         initializeDatabaseConnections();
         
         TemperatureController.initRepository(temperatureRepository);
+        UserController.initRepository(userRepository);
         
         System.getProperties().put("server.port", applicationSettings.getServerSettings().getPort());
         SpringApplication.run(ApplicationRoot.class, args);

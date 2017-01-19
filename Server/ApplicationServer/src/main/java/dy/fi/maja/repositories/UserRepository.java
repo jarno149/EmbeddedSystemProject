@@ -7,8 +7,8 @@ package dy.fi.maja.repositories;
 
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
-import dy.fi.maja.applicationmodels.Temperature;
 import dy.fi.maja.applicationmodels.User;
+import java.util.Optional;
 import org.mongojack.DBCursor;
 import org.mongojack.DBQuery;
 import org.mongojack.JacksonDBCollection;
@@ -54,5 +54,9 @@ public class UserRepository
     {
         this.collection.insert(u);
     }
-            
+    
+    public User getByUsername(String username)
+    {
+        return this.collection.findOne(DBQuery.is("username", username));
+    }    
 }
