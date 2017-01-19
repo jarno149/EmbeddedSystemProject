@@ -20,7 +20,7 @@ public class UserService
 {
     private static UserRepository userRepo;
     
-    public void ProfileService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         userRepo = userRepository;
     }
     

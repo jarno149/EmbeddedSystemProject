@@ -23,9 +23,9 @@ public class UserController
     private static UserRepository userRepository;
     private static UserService userService;
     
-    public static void initController(UserRepository userRepository, UserService userService) {
+    public static void initController(UserRepository userRepository) {
         UserController.userRepository = userRepository;
-        UserController.userService = userService;
+        userService = new UserService(UserController.userRepository);
     }
     
     @RequestMapping(value = "/create", method = RequestMethod.GET)

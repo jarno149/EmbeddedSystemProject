@@ -5,6 +5,8 @@
  */
 package dy.fi.maja.services;
 
+import authentication.SecretKeyProvider;
+import dy.fi.maja.applicationmodels.MinimalUser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.IOException;
@@ -21,7 +23,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class JwtService {
-    private static final String ISSUER = "in.sdqali.jwt";
+    private static final String ISSUER = "dy.fi.maja.jwt";
     private SecretKeyProvider secretKeyProvider;
 
     @SuppressWarnings("unused")
@@ -34,11 +36,11 @@ public class JwtService {
         this.secretKeyProvider = secretKeyProvider;
     }
 
-    public String tokenFor(MinimalProfile minimalProfile) throws IOException, URISyntaxException {
+    public String tokenFor(MinimalUser minimalUser) throws IOException, URISyntaxException {
         byte[] secretKey = secretKeyProvider.getKey();
         Date expiration = Date.from(LocalDateTime.now().plusHours(2).toInstant(UTC));
         return Jwts.builder()
-                .setSubject(minimalProfile.getUsername())
+                .setSubject(minimalUser.getUsername())
                 .setExpiration(expiration)
                 .setIssuer(ISSUER)
                 .signWith(SignatureAlgorithm.HS512, secretKey)

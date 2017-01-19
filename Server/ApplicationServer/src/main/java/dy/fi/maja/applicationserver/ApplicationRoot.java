@@ -14,6 +14,7 @@ import dy.fi.maja.controllers.UserController;
 import dy.fi.maja.repositories.TemperatureRepository;
 import dy.fi.maja.repositories.UserRepository;
 import dy.fi.maja.services.MqttTemperatureService;
+import dy.fi.maja.services.UserService;
 import dy.fi.maja.utils.Settings;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -48,7 +49,7 @@ public class ApplicationRoot
         initializeDatabaseConnections();
         
         TemperatureController.initRepository(temperatureRepository);
-        UserController.initRepository(userRepository);
+        UserController.initController(userRepository);
         
         System.getProperties().put("server.port", applicationSettings.getServerSettings().getPort());
         SpringApplication.run(ApplicationRoot.class, args);

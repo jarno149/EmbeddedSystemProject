@@ -1,15 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package authentication;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author fakero
  */
-public class SecretKeyProvider
-{
-    
+@Component
+public class SecretKeyProvider {
+    public byte[] getKey() throws URISyntaxException, IOException {
+        return Files.readAllBytes(Paths.get(this.getClass().getResource("/jwt.key").toURI()));
+    }
 }

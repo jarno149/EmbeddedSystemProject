@@ -7,6 +7,7 @@ package dy.fi.maja.controllers;
 
 import authentication.LoginCredentials;
 import dy.fi.maja.applicationmodels.MinimalUser;
+import dy.fi.maja.services.JwtService;
 import dy.fi.maja.services.LoginService;
 import exceptions.FailedToLoginException;
 import javax.servlet.http.HttpServletResponse;
@@ -41,15 +42,18 @@ public class LoginController
         this.jwtService = jwtService;
     }
 
-    @RequestMapping(path = "",
-            method = POST,
-            produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(path = "", method = POST, produces = APPLICATION_JSON_VALUE)
     public MinimalUser login(@RequestBody LoginCredentials credentials, HttpServletResponse response)
     {
         MinimalUser user = loginService.login(credentials);
         if(user != null)
         {
-            return null;
+            try {
+                response.setHeader("Token", jwtService.tokenFor(user));
+                return user;
+            } catch(Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         else
         {
