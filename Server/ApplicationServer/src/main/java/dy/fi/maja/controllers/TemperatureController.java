@@ -9,11 +9,15 @@ import dy.fi.maja.applicationmodels.Temperature;
 import dy.fi.maja.repositories.TemperatureRepository;
 import java.util.List;
 import java.util.Optional;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiParams;
+import org.jsondoc.core.annotation.ApiQueryParam;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
 
+@Api(name = "Temperature service", description = "Methods for querying temperatures")
 @RestController
-@RequestMapping("/Temperatures")
+@RequestMapping("/temperatures")
 public class TemperatureController
 {
     private static TemperatureRepository repo;
@@ -24,16 +28,14 @@ public class TemperatureController
     }
     
     @RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json")
-    public Temperature[] getAllTemperatures(@RequestParam Optional<String> count)
+    public Temperature[] getAllTemperatures(@ApiQueryParam(description = "Count of results", name = "count", required = false)
+    @RequestParam Optional<Integer> count)
     {
-        int c = Integer.parseInt(count.orElse("-1"));
-        if(c == -1)
-            return repo.getAll();
-        else
-            return repo.getAll(c);
+        int c = count.orElse(100);
+        return repo.getAll(c);
     }
     
-    @RequestMapping(value = "/lastDay", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/lastday", method = RequestMethod.GET, produces = "application/json")
     public Temperature[] getLastDayTemperatures()
     {
         long currTimestamp = System.currentTimeMillis();
@@ -41,18 +43,17 @@ public class TemperatureController
         return repo.getBetweenTimestamps(currTimestamp - dayTimestamp, currTimestamp);
     }
     
-    @RequestMapping(value = "/byName", method = RequestMethod.GET, produces = "application/json")
-    public Temperature[] getSensorsTemperatures(@RequestParam String sensorName, @RequestParam Optional<String> count)
+    @RequestMapping(value = "/byname", method = RequestMethod.GET, produces = "application/json")
+    public Temperature[] getSensorsTemperatures(@ApiQueryParam(description = "Sensor name", name = "sensorname", required = true)
+    @RequestParam String sensorname,
+    @ApiQueryParam(description = "Count of results", name="count", required = false)
+    @RequestParam Optional<Integer> count)
     {
-        Temperature[] temps;
-        int c = Integer.parseInt(count.orElse("-1"));
-        if(c == -1)
-            return repo.getBySensorname(sensorName);
-        else
-            return repo.getBySensorname(sensorName, c);
+        int c = count.orElse(100);
+        return repo.getBySensorname(sensorname, c);
     }
     
-    @RequestMapping(value = "/sensorNames", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/sensornames", method = RequestMethod.GET, produces = "application/json")
     public List getSensorNames()
     {
         return repo.getSensorNames();
