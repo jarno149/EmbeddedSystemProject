@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Optional;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiParams;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @Api(name = "Temperature service", description = "Methods for querying temperatures")
@@ -57,5 +59,17 @@ public class TemperatureController
     public List getSensorNames()
     {
         return repo.getSensorNames();
+    }
+    
+    @ResponseStatus(HttpStatus.CREATED)
+    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
+    public Temperature insertTemperature(@ApiPathParam(description = "Insert new temperature", name = "temperature")
+    @RequestBody Temperature temperature)
+    {
+        if(temperature != null)
+        {
+            repo.insert(temperature);
+        }
+        return temperature;
     }
 }
