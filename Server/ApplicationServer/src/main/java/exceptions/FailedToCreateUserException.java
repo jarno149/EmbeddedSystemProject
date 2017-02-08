@@ -11,10 +11,10 @@ import static java.lang.String.format;
  *
  * @author fakero
  */
-public class FailedToLoginException extends RuntimeException
+public class FailedToCreateUserException extends RuntimeException
 {
-    public FailedToLoginException(String username)
+    public FailedToCreateUserException()
     {
-        super(format("Failed to login with username %s", username));
+        super(format("Failed to create a new user"));
     }
 }

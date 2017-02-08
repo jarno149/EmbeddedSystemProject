@@ -3,15 +3,15 @@
         "port" : 8081
     },
 	"temperatureMqttSettings" : {
-		"url" : "maja.dy.fi",
-		"userName" : "sensor",
-		"passWord" : "sensor",
+		"url" : "12.69.75.14",
+		"userName" : null,
+		"passWord" : null,
 		"port" : 1883,
         "topic" : "sensors/temperatures",
 		"storageIntervalSecs" : 1800
 	},
 	"databaseSettings" : {
-		"url" : "maja.dy.fi",
+		"url" : "127.0.0.1",
 		"userName" : null,
 		"passWord" : null,
 		"port" : 27017

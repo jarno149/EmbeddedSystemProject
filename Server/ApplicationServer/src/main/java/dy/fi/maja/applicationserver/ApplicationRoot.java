@@ -5,14 +5,18 @@
  */
 package dy.fi.maja.applicationserver;
 
+import authentication.SecretKeyProvider;
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import dy.fi.maja.applicationmodels.Temperature;
 import dy.fi.maja.applicationmodels.User;
+import dy.fi.maja.controllers.LoginController;
 import dy.fi.maja.controllers.TemperatureController;
 import dy.fi.maja.controllers.UserController;
 import dy.fi.maja.repositories.TemperatureRepository;
 import dy.fi.maja.repositories.UserRepository;
+import dy.fi.maja.services.JwtService;
+import dy.fi.maja.services.LoginService;
 import dy.fi.maja.services.MqttTemperatureService;
 import dy.fi.maja.services.UserService;
 import dy.fi.maja.utils.Settings;
@@ -32,7 +36,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"dy.fi.maja.controllers"})
+@ComponentScan(basePackages = {"dy.fi.maja.controllers", "configuration"})
 @EnableAutoConfiguration(exclude={MongoAutoConfiguration.class})
 public class ApplicationRoot
 {
@@ -41,6 +45,10 @@ public class ApplicationRoot
     public static UserRepository userRepository;
     
     public static MqttTemperatureService mqttService;
+    public static SecretKeyProvider keyProvider;
+    public static LoginService loginService;
+    public static JwtService jwtService;
+    public static UserService userService;
     
     public static void main(String[] args)
     {
@@ -50,7 +58,15 @@ public class ApplicationRoot
         
         TemperatureController.initRepository(temperatureRepository);
         UserController.initController(userRepository);
-        
+
+                
+        keyProvider = new SecretKeyProvider();        
+        jwtService = new JwtService(keyProvider);
+        userService = new UserService(userRepository);
+        loginService = new LoginService(userService);
+
+        LoginController.initController(loginService, jwtService);
+                
         System.getProperties().put("server.port", applicationSettings.getServerSettings().getPort());
         SpringApplication.run(ApplicationRoot.class, args);
         

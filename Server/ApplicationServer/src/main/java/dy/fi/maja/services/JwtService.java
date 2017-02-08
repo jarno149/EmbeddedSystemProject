@@ -14,29 +14,29 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import static java.time.ZoneOffset.UTC;
 import java.util.Date;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  *
  * @author fakero
  */
-@Component
-public class JwtService {
+public class JwtService
+{
     private static final String ISSUER = "dy.fi.maja.jwt";
     private SecretKeyProvider secretKeyProvider;
 
     @SuppressWarnings("unused")
-    public JwtService() {
+    public JwtService()
+    {
         this(null);
     }
 
-    @Autowired
-    public JwtService(SecretKeyProvider secretKeyProvider) {
+    public JwtService(SecretKeyProvider secretKeyProvider)
+    {
         this.secretKeyProvider = secretKeyProvider;
     }
 
-    public String tokenFor(MinimalUser minimalUser) throws IOException, URISyntaxException {
+    public String tokenFor(MinimalUser minimalUser) throws IOException, URISyntaxException
+    {
         byte[] secretKey = secretKeyProvider.getKey();
         Date expiration = Date.from(LocalDateTime.now().plusHours(2).toInstant(UTC));
         return Jwts.builder()

@@ -18,7 +18,8 @@ public class DetailedUser
     private final String firstname;
     private final String lastname;
     
-    public DetailedUser(User user){
+    public DetailedUser(User user)
+    {
         username = user.getUsername();
         firstname = user.getFirstname();
         lastname = user.getLastname();

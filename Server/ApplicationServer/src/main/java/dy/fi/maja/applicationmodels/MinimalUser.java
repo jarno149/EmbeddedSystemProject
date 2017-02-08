@@ -17,7 +17,8 @@ public class MinimalUser
     private final String username;
     private final String firstname;
     
-    public MinimalUser(User user){
+    public MinimalUser(User user)
+    {
         username = user.getUsername();
         firstname = user.getFirstname();
     }

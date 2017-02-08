@@ -11,7 +11,6 @@ import dy.fi.maja.services.JwtService;
 import dy.fi.maja.services.LoginService;
 import exceptions.FailedToLoginException;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,20 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/login")
 public class LoginController
 {
-    private final LoginService loginService;
-    private final JwtService jwtService;
+    private static LoginService loginService;
+    private static JwtService jwtService;
     
-    @SuppressWarnings("unused")
-    public LoginController()
+    public static void initController(LoginService loginSer, JwtService jwtSer)
     {
-        this(null, null);    
-    }
-    
-    @Autowired
-    public LoginController(LoginService loginService, JwtService jwtService)
-    {
-        this.loginService = loginService;
-        this.jwtService = jwtService;
+        loginService = loginSer;
+        jwtService = jwtSer;
     }
 
     @RequestMapping(path = "", method = POST, produces = APPLICATION_JSON_VALUE)
@@ -48,10 +40,13 @@ public class LoginController
         MinimalUser user = loginService.login(credentials);
         if(user != null)
         {
-            try {
+            try
+            {
                 response.setHeader("Token", jwtService.tokenFor(user));
                 return user;
-            } catch(Exception e) {
+            }
+            catch(Exception e)
+            {
                 throw new RuntimeException(e);
             }
         }

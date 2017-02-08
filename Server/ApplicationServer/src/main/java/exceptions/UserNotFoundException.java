@@ -11,10 +11,11 @@ import static java.lang.String.format;
  *
  * @author fakero
  */
-public class FailedToLoginException extends RuntimeException
+
+public class UserNotFoundException extends RuntimeException
 {
-    public FailedToLoginException(String username)
+    public UserNotFoundException(String username)
     {
-        super(format("Failed to login with username %s", username));
+        super(format("User %s does not exist", username));
     }
 }

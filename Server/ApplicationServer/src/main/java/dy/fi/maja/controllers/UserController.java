@@ -5,13 +5,21 @@
  */
 package dy.fi.maja.controllers;
 
+import dy.fi.maja.applicationmodels.DetailedUser;
+import dy.fi.maja.applicationmodels.MinimalUser;
 import dy.fi.maja.applicationmodels.User;
 import dy.fi.maja.repositories.UserRepository;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import dy.fi.maja.services.UserService;
+import exceptions.FailedToCreateUserException;
+import exceptions.UserNotFoundException;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import org.springframework.web.bind.annotation.RequestBody;
 /**
  *
  * @author fakero
@@ -23,25 +31,51 @@ public class UserController
     private static UserRepository userRepository;
     private static UserService userService;
     
-    public static void initController(UserRepository userRepository) {
+    public static void initController(UserRepository userRepository)
+    {
         UserController.userRepository = userRepository;
         userService = new UserService(UserController.userRepository);
     }
     
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public void createUser(String id, String firstname, String lastname, String username, String password, String[] roles){
-        User u = new User();
-        u.setId(id);
-        u.setFirstname(firstname);
-        u.setLastname(lastname);
-        u.setUsername(username);
-        u.setPassword(password);
-        u.setRoles(roles);
-        if(u.getUsername() != null && u.getPassword() != null && u.getId() != null){
-            userRepository.insert(u);
+    @RequestMapping(path = "/create", method = POST)
+    public MinimalUser createUser(@RequestBody User user)
+    {
+        MinimalUser miniuser = userService.create(user);
+        if(miniuser != null)
+        {
+            return miniuser;
+        }
+        else
+        {
+            throw new FailedToCreateUserException();
         }
     }
     
+    @RequestMapping(path = "/{username}", method = GET, produces = APPLICATION_JSON_VALUE)
+    public MinimalUser minimal(@PathVariable String username)
+    {
+        MinimalUser user = userService.minimal(username);
+        if(user != null)
+        {
+            return user;
+        }
+        else
+        {
+            throw new UserNotFoundException(username);
+        }
+    }
     
-    
+    @RequestMapping(path = "/details/{username}", method = GET, produces = APPLICATION_JSON_VALUE)
+    public DetailedUser details(@PathVariable String username)
+    {
+        DetailedUser user = userService.detailed(username);
+        if(user != null)
+        {
+            return user;
+        }
+        else
+        {
+            throw new UserNotFoundException(username);
+        }
+    }
 }

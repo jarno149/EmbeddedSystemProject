@@ -8,13 +8,12 @@ package dy.fi.maja.services;
 import authentication.LoginCredentials;
 import dy.fi.maja.applicationmodels.MinimalUser;
 import dy.fi.maja.applicationmodels.User;
-import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 /**
  *
  * @author fakero
  */
-@Component
 public class LoginService
 {
     private UserService userService;
@@ -33,10 +32,10 @@ public class LoginService
     public MinimalUser login(LoginCredentials credentials)
     {
         User user = userService.get(credentials.getUsername());
-        if(user.getPassword().equals(credentials.getPassword()))
+        if(BCrypt.checkpw(credentials.getPassword(), user.getPassword()))
         {
             return new MinimalUser(user);
-        }        
+        }
         else
         {
             return null;
