@@ -1,0 +1,19 @@
+{
+    "serverSettings" :{
+        "port" : 28862
+    },
+	"temperatureMqttSettings" : {
+		"url" : "13.69.75.14",
+		"userName" : "sensor",
+		"passWord" : "sensor",
+		"port" : 1883,
+        "topic" : "sensors/temperatures",
+		"storageIntervalSecs" : 1800
+	},
+	"databaseSettings" : {
+		"url" : "13.69.75.14",
+		"userName" : null,
+		"passWord" : null,
+		"port" : 27017
+	}
+}
