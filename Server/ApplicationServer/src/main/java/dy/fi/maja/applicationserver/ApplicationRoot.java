@@ -16,6 +16,9 @@ import dy.fi.maja.services.MqttTemperatureService;
 import dy.fi.maja.utils.Settings;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jsondoc.spring.boot.starter.EnableJSONDoc;
@@ -44,6 +47,16 @@ public class ApplicationRoot
     
     public static void main(String[] args)
     {
+        // TESTING
+        String dateString = "20.1.2017";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d.M.yyyy");
+        
+        LocalDate date = LocalDate.parse(dateString, formatter);
+        
+        System.out.println(date);
+        
+        
+        
         // Get settings from file
         applicationSettings = initializeSettings();
         initializeDatabaseConnections();
