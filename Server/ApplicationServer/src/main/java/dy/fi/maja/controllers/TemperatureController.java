@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/Temperatures")
+@RequestMapping("/temperatures")
 public class TemperatureController
 {
     private static TemperatureRepository repo;

@@ -28,13 +28,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/user")
 public class UserController
 {
-    private static UserRepository userRepository;
     private static UserService userService;
     
-    public static void initController(UserRepository userRepository)
+    public static void initController(UserService userSer)
     {
-        UserController.userRepository = userRepository;
-        userService = new UserService(UserController.userRepository);
+        userService = userSer;
     }
     
     @RequestMapping(path = "/create", method = POST)

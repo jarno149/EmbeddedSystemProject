@@ -5,9 +5,13 @@
  */
 package dy.fi.maja.applicationserver;
 
+import authentication.JwtAuthFilter;
+import authentication.JwtAuthenticationEntryPoint;
+import authentication.JwtAuthenticationProvider;
 import authentication.SecretKeyProvider;
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
+import configuration.SecurityConfig;
 import dy.fi.maja.applicationmodels.Temperature;
 import dy.fi.maja.applicationmodels.User;
 import dy.fi.maja.controllers.LoginController;
@@ -45,26 +49,24 @@ public class ApplicationRoot
     public static UserRepository userRepository;
     
     public static MqttTemperatureService mqttService;
-    public static SecretKeyProvider keyProvider;
-    public static LoginService loginService;
-    public static JwtService jwtService;
-    public static UserService userService;
+    
+    private static SecretKeyProvider keyProvider;
+    private static LoginService loginService;
+    private static JwtService jwtService;
+    private static UserService userService;
+    private static JwtAuthFilter jwtAuthFilter;    
+    private static JwtAuthenticationProvider jwtAuthenticationProvider;   
+    private static JwtAuthenticationEntryPoint jwtAuthEndPoint;
     
     public static void main(String[] args)
     {
         // Get settings from file
         applicationSettings = initializeSettings();
         initializeDatabaseConnections();
+        initJwtAuthentication();
         
         TemperatureController.initRepository(temperatureRepository);
-        UserController.initController(userRepository);
-
-                
-        keyProvider = new SecretKeyProvider();        
-        jwtService = new JwtService(keyProvider);
-        userService = new UserService(userRepository);
-        loginService = new LoginService(userService);
-
+        UserController.initController(userService);
         LoginController.initController(loginService, jwtService);
                 
         System.getProperties().put("server.port", applicationSettings.getServerSettings().getPort());
@@ -73,6 +75,18 @@ public class ApplicationRoot
         mqttService = new MqttTemperatureService(applicationSettings.getTemperatureMqttSettings(), temperatureRepository);
         Thread mqttServiceThread = new Thread(mqttService);
         mqttServiceThread.start();
+    }
+    
+    private static void initJwtAuthentication()
+    {
+        keyProvider = new SecretKeyProvider();
+        userService = new UserService(userRepository);
+        jwtService = new JwtService(keyProvider, userService);
+        loginService = new LoginService(userService);
+        jwtAuthFilter = new JwtAuthFilter();
+        jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtService);
+        jwtAuthEndPoint = new JwtAuthenticationEntryPoint();
+        SecurityConfig.init(jwtAuthFilter, jwtAuthenticationProvider, jwtAuthEndPoint);
     }
     
     private static void initializeDatabaseConnections()

@@ -17,16 +17,16 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
  */
 public class UserService
 {
-    private static UserRepository userRepo;
+    private static UserRepository userRepository;
     
-    public UserService(UserRepository userRepository)
+    public UserService(UserRepository userRepo)
     {
-        userRepo = userRepository;
+        userRepository = userRepo;
     }
     
     protected User get(String username)
     {
-        return userRepo.getByUsername(username);
+        return userRepository.getByUsername(username);
     }
     
     public MinimalUser minimal(String username)
@@ -41,15 +41,15 @@ public class UserService
     
     public MinimalUser create(User user)
     {
-        if(user.getId() != null && user.getUsername() != null && user.getPassword() != null && user.getFirstname() != null)
+        if(user.getUsername() != null && user.getPassword() != null && user.getFirstname() != null)
         {
             user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-            userRepo.insert(user);
+            userRepository.insert(user);
             return new MinimalUser(user);
         }
         else
         {
             return null;
-        }       
+        }
     }
 }
