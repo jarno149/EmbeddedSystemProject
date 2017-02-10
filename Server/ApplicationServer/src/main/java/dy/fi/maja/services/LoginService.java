@@ -8,6 +8,7 @@ package dy.fi.maja.services;
 import authentication.LoginCredentials;
 import dy.fi.maja.applicationmodels.MinimalUser;
 import dy.fi.maja.applicationmodels.User;
+import exceptions.FailedToLoginException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 /**
@@ -32,6 +33,10 @@ public class LoginService
     public MinimalUser login(LoginCredentials credentials)
     {
         User user = userService.get(credentials.getUsername());
+        if(user == null)
+        {
+            throw new FailedToLoginException(credentials.getUsername());
+        }
         if(BCrypt.checkpw(credentials.getPassword(), user.getPassword()))
         {
             return new MinimalUser(user);

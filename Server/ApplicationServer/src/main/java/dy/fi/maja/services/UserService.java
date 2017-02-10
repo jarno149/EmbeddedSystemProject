@@ -26,7 +26,7 @@ public class UserService
     
     protected User get(String username)
     {
-        return userRepository.getByUsername(username);
+        return userRepository.getByUsername(username);        
     }
     
     public MinimalUser minimal(String username)

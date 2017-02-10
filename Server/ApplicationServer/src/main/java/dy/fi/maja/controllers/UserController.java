@@ -38,42 +38,40 @@ public class UserController
     @RequestMapping(path = "/create", method = POST)
     public MinimalUser createUser(@RequestBody User user)
     {
-        MinimalUser miniuser = userService.create(user);
-        if(miniuser != null)
+        try
         {
-            return miniuser;
+            return userService.create(user);
         }
-        else
+        catch(Exception e)
         {
             throw new FailedToCreateUserException();
-        }
+        } 
     }
     
     @RequestMapping(path = "/{username}", method = GET, produces = APPLICATION_JSON_VALUE)
     public MinimalUser minimal(@PathVariable String username)
     {
-        MinimalUser user = userService.minimal(username);
-        if(user != null)
+        try
         {
-            return user;
+            return userService.minimal(username);
         }
-        else
+        catch(Exception e)
         {
             throw new UserNotFoundException(username);
-        }
+        }        
     }
     
     @RequestMapping(path = "/details/{username}", method = GET, produces = APPLICATION_JSON_VALUE)
     public DetailedUser details(@PathVariable String username)
     {
-        DetailedUser user = userService.detailed(username);
-        if(user != null)
+        
+        try
         {
-            return user;
+            return userService.detailed(username);
         }
-        else
+        catch(Exception e)
         {
             throw new UserNotFoundException(username);
-        }
+        } 
     }
 }
