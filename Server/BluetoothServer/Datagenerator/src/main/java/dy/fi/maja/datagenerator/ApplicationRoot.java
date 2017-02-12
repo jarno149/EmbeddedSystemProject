@@ -27,6 +27,14 @@ public class ApplicationRoot
     
     public static void main(String[] args) throws InterruptedException
     {
+        if(args.length < 1)
+        {
+            System.out.println("Give sensorname!");
+            System.exit(0);
+        }
+        
+        String sensorname = args[0];
+        
         // Read settings from file
         Settings.readSettings();
         
@@ -47,8 +55,8 @@ public class ApplicationRoot
                     val -= 0.1;
                 
                 val = Math.round(val * 100) / 100.0;
-                TemperatureObject.TemperatureUnit unit = new TemperatureObject.TemperatureUnit("°C", TemperatureObject.Unit.Celsius);
-                TemperatureObject o = new TemperatureObject("DatageneratorData", val, unit, System.currentTimeMillis());
+                TemperatureObject.TemperatureUnit unit = new TemperatureObject.TemperatureUnit(" C", TemperatureObject.Unit.Celsius);
+                TemperatureObject o = new TemperatureObject(sensorname, val, unit, System.currentTimeMillis());
                 
                 String jsonString = gson.toJson(o);
                 System.out.println("Publishing: " + jsonString);

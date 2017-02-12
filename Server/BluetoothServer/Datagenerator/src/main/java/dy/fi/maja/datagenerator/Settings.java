@@ -24,6 +24,7 @@ public class Settings
     public static String BrokerPassword;
     public static String BrokerTopic;
     public static int Interval;
+    public static String[] fakesensors;
     
     public static void readSettings()
     {
@@ -39,6 +40,7 @@ public class Settings
             BrokerPassword = (String)jsonObject.get("BrokerPassword");
             BrokerUsername = (String)jsonObject.get("BrokerUsername");
             BrokerTopic = (String)jsonObject.get("BrokerTopic");
+            
             String interval = (String)jsonObject.get("Interval");
             try
             {

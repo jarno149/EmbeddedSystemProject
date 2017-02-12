@@ -14,23 +14,25 @@ import java.util.Date;
  */
 public class TemperatureObject
 {
-    private String id;
+    private String sensorname;
     private double value;
     private TemperatureUnit unit;
     private long timeStamp;
 
-    public TemperatureObject(String id, double value, TemperatureUnit unit, long timeStamp)
+    public TemperatureObject(String sensorname, double value, TemperatureUnit unit, long timeStamp)
     {
-        this.id = id;
+        this.sensorname = sensorname;
         this.value = value;
         this.unit = unit;
         this.timeStamp = timeStamp;
     }
 
-    public String getId()
+    public String getSensorname()
     {
-        return id;
+        return sensorname;
     }
+    
+    
 
     public double getValue()
     {
