@@ -43,6 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().ignoringAntMatchers("/login");
         http.csrf().ignoringAntMatchers("/user/create");
+        http.csrf().ignoringAntMatchers("/temperatures/all");
 
         http.authorizeRequests()
                 .antMatchers("/login")

@@ -6,12 +6,14 @@
 package dy.fi.maja.controllers;
 
 import authentication.LoginCredentials;
+import dy.fi.maja.applicationmodels.LoginUser;
 import dy.fi.maja.applicationmodels.MinimalUser;
 import dy.fi.maja.services.JwtService;
 import dy.fi.maja.services.LoginService;
 import exceptions.FailedToLoginException;
 import javax.servlet.http.HttpServletResponse;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author fakero
  */
+@CrossOrigin
 @RestController
 @RequestMapping(path = "/login")
 public class LoginController
@@ -34,16 +37,16 @@ public class LoginController
         jwtService = jwtSer;
     }
 
+    @CrossOrigin
     @RequestMapping(path = "", method = POST, produces = APPLICATION_JSON_VALUE)
-    public MinimalUser login(@RequestBody LoginCredentials credentials, HttpServletResponse response)
+    public LoginUser login(@RequestBody LoginCredentials credentials, HttpServletResponse response)
     {
         MinimalUser user = loginService.login(credentials);
         if(user != null)
         {
             try
-            {
-                response.setHeader("Token", jwtService.tokenFor(user));
-                return user;
+            {                
+                return new LoginUser(user, jwtService.tokenFor(user));
             }
             catch(Exception e)
             {

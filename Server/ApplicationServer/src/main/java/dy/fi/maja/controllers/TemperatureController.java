@@ -25,8 +25,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 @Api(name = "Temperature service", description = "Methods for querying temperatures")
+@CrossOrigin
 @RestController
 @RequestMapping("/temperatures")
 public class TemperatureController
@@ -38,6 +41,7 @@ public class TemperatureController
         repo = repository;
     }
     
+    @CrossOrigin
     @RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json")
     public Temperature[] getAllTemperatures(@ApiQueryParam(description = "Count of results", name = "count", required = false)
     @RequestParam Optional<Integer> count)
