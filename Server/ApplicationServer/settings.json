@@ -1,6 +1,6 @@
 {
     "serverSettings" :{
-        "port" : 8081
+        "port" : 28862
     },
 	"temperatureMqttSettings" : {
 		"url" : "13.69.75.14",
