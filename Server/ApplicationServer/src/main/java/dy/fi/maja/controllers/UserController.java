@@ -38,14 +38,12 @@ public class UserController
     @RequestMapping(path = "/create", method = POST)
     public MinimalUser createUser(@RequestBody User user)
     {
-        try
-        {
-            return userService.create(user);
-        }
-        catch(Exception e)
-        {
+        MinimalUser min = userService.create(user);
+        if(min != null)
+            return min;
+        else
             throw new FailedToCreateUserException();
-        } 
+         
     }
     
     @RequestMapping(path = "/{username}", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -74,4 +72,6 @@ public class UserController
             throw new UserNotFoundException(username);
         } 
     }
+    
+    
 }

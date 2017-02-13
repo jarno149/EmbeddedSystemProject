@@ -33,17 +33,18 @@ public class LoginService
     public MinimalUser login(LoginCredentials credentials)
     {
         User user = userService.get(credentials.getUsername());
-        if(user == null)
+        if(user != null)
         {
-            throw new FailedToLoginException(credentials.getUsername());
-        }
-        if(BCrypt.checkpw(credentials.getPassword(), user.getPassword()))
-        {
-            return new MinimalUser(user);
+            if(BCrypt.checkpw(credentials.getPassword(), user.getPassword()))
+            {
+                return new MinimalUser(user);
+            }
+            else
+            {
+                return null;
+            }
         }
         else
-        {
             return null;
-        }
     }
 }

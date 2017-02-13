@@ -9,6 +9,7 @@ import dy.fi.maja.applicationmodels.MinimalUser;
 import dy.fi.maja.applicationmodels.User;
 import dy.fi.maja.repositories.UserRepository;
 import dy.fi.maja.applicationmodels.DetailedUser;
+import exceptions.FailedToCreateUserException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 /**
@@ -50,6 +51,7 @@ public class UserService
         else
         {
             return null;
+            //throw new FailedToCreateUserException();
         }
     }
 }

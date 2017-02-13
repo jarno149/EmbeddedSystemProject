@@ -6,11 +6,14 @@
 package exceptions;
 
 import static java.lang.String.format;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  *
  * @author fakero
  */
+@ResponseStatus(UNAUTHORIZED)
 public class FailedToLoginException extends RuntimeException
 {
     public FailedToLoginException(String username)

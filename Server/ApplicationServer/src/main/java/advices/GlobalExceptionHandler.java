@@ -24,13 +24,16 @@ public class GlobalExceptionHandler
 {
     @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
-    public void profileNotFound() {}
+    public void profileNotFound() {
+    }
 
     @ResponseStatus(UNAUTHORIZED)
     @ExceptionHandler(FailedToLoginException.class)
-    public void failedToLogin() {}
+    public void failedToLogin() {
+    }
     
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(FailedToCreateUserException.class)
-    public void failedToCreateUser() {}
+    public void failedToCreateUser() {
+    }
 }
