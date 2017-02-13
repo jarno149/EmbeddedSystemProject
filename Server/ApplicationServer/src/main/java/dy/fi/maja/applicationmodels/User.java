@@ -12,6 +12,7 @@ import org.mongojack.*;
  *
  * @author Jarno
  */
+
 public class User
 {
     @Id
@@ -90,6 +91,4 @@ public class User
     {
         this.roles = roles;
     }
-    
-    
 }

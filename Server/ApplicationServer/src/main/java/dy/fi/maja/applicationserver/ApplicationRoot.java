@@ -5,14 +5,24 @@
  */
 package dy.fi.maja.applicationserver;
 
+import authentication.JwtAuthFilter;
+import authentication.JwtAuthenticationEntryPoint;
+import authentication.JwtAuthenticationProvider;
+import authentication.SecretKeyProvider;
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
+import configuration.SecurityConfig;
 import dy.fi.maja.applicationmodels.Temperature;
 import dy.fi.maja.applicationmodels.User;
+import dy.fi.maja.controllers.LoginController;
 import dy.fi.maja.controllers.TemperatureController;
+import dy.fi.maja.controllers.UserController;
 import dy.fi.maja.repositories.TemperatureRepository;
 import dy.fi.maja.repositories.UserRepository;
+import dy.fi.maja.services.JwtService;
+import dy.fi.maja.services.LoginService;
 import dy.fi.maja.services.MqttTemperatureService;
+import dy.fi.maja.services.UserService;
 import dy.fi.maja.utils.Settings;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -35,7 +45,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableJSONDoc
-@ComponentScan(basePackages = {"dy.fi.maja.controllers"})
+@ComponentScan(basePackages = {"dy.fi.maja.controllers", "configuration"})
 @EnableAutoConfiguration(exclude={MongoAutoConfiguration.class})
 public class ApplicationRoot
 {
@@ -44,6 +54,14 @@ public class ApplicationRoot
     public static UserRepository userRepository;
     
     public static MqttTemperatureService mqttService;
+    
+    private static SecretKeyProvider keyProvider;
+    private static LoginService loginService;
+    private static JwtService jwtService;
+    private static UserService userService;
+    private static JwtAuthFilter jwtAuthFilter;    
+    private static JwtAuthenticationProvider jwtAuthenticationProvider;   
+    private static JwtAuthenticationEntryPoint jwtAuthEndPoint;
     
     public static void main(String[] args)
     {
@@ -60,15 +78,30 @@ public class ApplicationRoot
         // Get settings from file
         applicationSettings = initializeSettings();
         initializeDatabaseConnections();
+        initJwtAuthentication();
         
         TemperatureController.initRepository(temperatureRepository);
-        
+        UserController.initController(userService);
+        LoginController.initController(loginService, jwtService);
+                
         System.getProperties().put("server.port", applicationSettings.getServerSettings().getPort());
         SpringApplication.run(ApplicationRoot.class, args);
         
         mqttService = new MqttTemperatureService(applicationSettings.getTemperatureMqttSettings(), temperatureRepository);
         Thread mqttServiceThread = new Thread(mqttService);
         mqttServiceThread.start();
+    }
+    
+    private static void initJwtAuthentication()
+    {
+        keyProvider = new SecretKeyProvider();
+        userService = new UserService(userRepository);
+        jwtService = new JwtService(keyProvider, userService);
+        loginService = new LoginService(userService);
+        jwtAuthFilter = new JwtAuthFilter();
+        jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtService);
+        jwtAuthEndPoint = new JwtAuthenticationEntryPoint();
+        SecurityConfig.init(jwtAuthFilter, jwtAuthenticationProvider, jwtAuthEndPoint);
     }
     
     private static void initializeDatabaseConnections()
