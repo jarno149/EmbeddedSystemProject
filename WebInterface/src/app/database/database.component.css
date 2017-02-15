@@ -1,0 +1,5 @@
+.span3 {
+  height: 750px !important;
+  overflow: scroll;
+  opacity: 0.75;
+}

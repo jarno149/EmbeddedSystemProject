@@ -1,0 +1,33 @@
+<!--- <ul class="temperatures">
+  <li *ngFor="let temperature of temperatures">
+    <span>{{temperature.value}}</span>
+  </li>
+</ul> --->
+<!---<app-message
+  [temperature]="temperatures"
+  *ngFor="let temperature of temperatures"></app-message> --->
+<div class="span3">
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Temperatures from database</div>
+
+<table class="table">
+  <thead>
+  <tr>
+    <th>Time</th>
+    <th>Sensorname</th>
+    <th>Reading</th>
+
+  </tr>
+  </thead>
+  <tbody *ngFor="let temperature of temperatures">
+  <tr>
+    <th scope="row">{{temperature.timestamp | date:'dd-MM-yyyy HH:mm:ss'}}</th>
+    <td>{{temperature.sensorname}}</td>
+    <td>{{temperature.value | number : '1.2-2'}}</td>
+  </tr>
+
+  </tbody>
+</table>
+</div>
+</div>
